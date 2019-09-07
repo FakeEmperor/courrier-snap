@@ -1,13 +1,13 @@
 import json
+import logging
 import pprint
 from enum import Enum
-from typing import List, Optional, Tuple, Dict
 from pathlib import Path
+from typing import List, Optional, Dict
+
 import attr
-import logging
 
 from courier_snap.utils import get_project_path
-
 
 logger = logging.getLogger(__name__)
 
@@ -58,8 +58,18 @@ class Order:
 class Courier:
     # TODO: more fields
     id: str
+    location_x: int
+    location_y: int
     orders_picked: List[Order]
-    # TODO: deserialize from json
+
+    @classmethod
+    def from_json(cls, courier: dict) -> 'Courier':
+        return cls(
+            id=courier['courier_id'],
+            location_x=courier['location_x'],
+            location_y=courier['location_y'],
+            orders_picked=list()
+        )
 
 
 class RouteActionType(Enum):
@@ -89,11 +99,19 @@ class YobaParser:
     def from_input_json(self, task_data_path: Path) -> OptimizeTask:
         logger.info("Loading data from {task_data_path.}")
         task_data = json.loads(task_data_path.read_text())
-        return OptimizeTask(orders={
-            order.id: order for order in [Order.from_json(order_data) for order_data in task_data["orders"]]
-        }, couriers={}, depots={})
+        return OptimizeTask(
+            orders={
+                order.id: order for order in [Order.from_json(order_data) for order_data in task_data["orders"]]
+            },
+            couriers={
+                courier.id: courier for courier in
+                [Courier.from_json(courier_data) for courier_data in task_data["couriers"]]
+            },
+            depots={}
+        )
 
 
 if __name__ == "__main__":
     task = YobaParser().from_input_json(get_project_path() / "task-data/data/contest_input.json")
     pprint.pprint(task.orders)
+    pprint.pprint(task.couriers)
