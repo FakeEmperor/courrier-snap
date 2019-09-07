@@ -1,0 +1,9 @@
+.venv/
+.env/
+envs/
+env
+*.pyc
+*.egg-info
+.idea
+.vs/
+.vscode/
