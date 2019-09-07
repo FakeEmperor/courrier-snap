@@ -1,12 +1,12 @@
-import numpy as np
 import os
-import plotly.graph_objects as go
 import json
+import numpy as np
+import plotly.graph_objects as go
 from utils import get_project_path
 
 
 path_to_data = os.path.join(
-    get_project_path(), 'task-data\\data\\contest_input.json')
+    get_project_path(), 'task-data', 'data', 'contest_input.json')
 f = open(path_to_data)
 json_contents = json.load(f)
 print(json_contents)
