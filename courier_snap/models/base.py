@@ -2,6 +2,7 @@ import json
 import logging
 import pprint
 from enum import Enum
+from typing import List, Optional, Tuple, Dict
 from pathlib import Path
 from typing import List, Optional, Dict
 
@@ -58,17 +59,13 @@ class Order:
 class Courier:
     # TODO: more fields
     id: str
-    location_x: int
-    location_y: int
-    orders_picked: List[Order]
+    location: Location
 
     @classmethod
     def from_json(cls, courier: dict) -> 'Courier':
         return cls(
             id=courier['courier_id'],
-            location_x=courier['location_x'],
-            location_y=courier['location_y'],
-            orders_picked=list()
+            location=Location(courier['location_x'], courier['location_y']),
         )
 
 
@@ -107,7 +104,10 @@ class YobaParser:
                 courier.id: courier for courier in
                 [Courier.from_json(courier_data) for courier_data in task_data["couriers"]]
             },
-            depots={}
+            depots={
+                depot_data["point_id"]: Location(depot_data["location_x"], depot_data["location_y"])
+                for depot_data in task_data["depots"]
+            }
         )
 
 
@@ -115,3 +115,4 @@ if __name__ == "__main__":
     task = YobaParser().from_input_json(get_project_path() / "task-data/data/contest_input.json")
     pprint.pprint(task.orders)
     pprint.pprint(task.couriers)
+    pprint.pprint(task.depots)
