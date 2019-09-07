@@ -5,10 +5,10 @@ from enum import Enum
 from typing import List, Optional, Tuple, Dict
 from pathlib import Path
 from typing import List, Optional, Dict
-
 import attr
 
 from courier_snap.utils import get_project_path
+from scipy.spatial import distance
 
 logger = logging.getLogger(__name__)
 
@@ -21,11 +21,21 @@ class Location:
     def __repr__(self) -> str:
         return f"({self.x}, {self.y})"
 
+    def distance(self, loc: 'Location', loc_type: str = 'cityblock') -> int:
+        return 10 + int(getattr(distance, loc_type)(attr.astuple(self), attr.astuple(loc)))
+
 
 @attr.s(repr=False, auto_attribs=True)
 class TimeRange:
     start: int
     end: int
+
+    @property
+    def diff(self) -> int:
+        return self.end - self.start
+
+    def __contains__(self, time: int) -> bool:
+        return self.start <= time <= self.end
 
     def __repr__(self) -> str:
         return f"start={self.start // 60:02d}:{self.start % 60:02d}, end={self.end // 60:02d}:{self.end % 60:02d}"
@@ -58,7 +68,7 @@ class Order:
 @attr.s(auto_attribs=True)
 class Courier:
     # TODO: more fields
-    id: str
+    id: int
     location: Location
 
     @classmethod
@@ -81,7 +91,14 @@ class RouteAction:
     order_id: int
     point_id: int
     depot_id: Optional[int]
-    # TODO: serialize json
+
+    def to_json(self) -> dict:
+        return {
+            "courier_id": self.courier_id,
+            "action": self.action_type.value,
+            "order_id": self.order_id,
+            "point_id": self.point_id,
+        }
 
 
 @attr.s(auto_attribs=True)
@@ -109,6 +126,10 @@ class YobaParser:
                 for depot_data in task_data["depots"]
             }
         )
+
+    def to_output_json(self, actions: List[RouteAction], output_file: Path):
+        with output_file.open(mode='w') as fp:
+            json.dump([action.to_json() for action in actions], fp, indent='  ')
 
 
 if __name__ == "__main__":

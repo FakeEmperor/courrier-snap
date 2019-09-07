@@ -7,3 +7,5 @@ env
 .idea
 .vs/
 .vscode/
+.ipynb_checkpoints
+/output.json
