@@ -1,0 +1,4 @@
+attrs
+numpy
+plotly
+matplotlib
