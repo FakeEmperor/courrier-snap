@@ -8,8 +8,7 @@ class Order:
     order_id: int
     pickup_point_id: int
     pickup_location: Tuple[int, int]
-    pickup_from: 360
-    pickup_to: 1380
+    pickup_time_range: Tuple[int, int]
     dropoff_point_id: int
     dropoff_location: Tuple[int, int]
     dropoff_time_range: Tuple[int, int]
