@@ -1,0 +1,3 @@
+[submodule "task-data"]
+	path = task-data
+	url = https://github.com/dostavista/phystech
