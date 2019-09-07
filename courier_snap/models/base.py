@@ -6,6 +6,8 @@ from pathlib import Path
 import attr
 import logging
 
+from courier_snap.utils import get_project_path
+
 
 logger = logging.getLogger(__name__)
 
@@ -93,5 +95,5 @@ class YobaParser:
 
 
 if __name__ == "__main__":
-    task = YobaParser().from_input_json(Path("../../task-data/data/contest_input.json"))
+    task = YobaParser().from_input_json(get_project_path() / "task-data/data/contest_input.json")
     pprint.pprint(task.orders)
