@@ -1,6 +1,13 @@
+import numpy as np
+import os
+import plotly.graph_objects as go
 import json
+from utils import get_project_path
 
-f = open("D:\hackathon\phystech-master\data\contest_input.json")
+
+path_to_data = os.path.join(
+    get_project_path(), 'task-data\\data\\contest_input.json')
+f = open(path_to_data)
 json_contents = json.load(f)
 print(json_contents)
 
@@ -22,14 +29,12 @@ for courier in json_contents['depots']:
     y_depots.append(courier['location_y'])
 
 for order in json_contents['orders']:
-    #print(order)
+    # print(order)
     x_start_order.append(order['pickup_location_x'])
     y_start_order.append(order['pickup_location_y'])
     x_end_order.append(order['dropoff_location_x'])
     y_end_order.append(order['dropoff_location_y'])
 
-import plotly.graph_objects as go
-import numpy as np
 
 fig = go.Figure()
 #fig = go.Figure(data=go.Scatter(x=x_couriers, y=x_couriers, mode='markers', name='courier'))
@@ -38,9 +43,10 @@ fig = go.Figure()
 # fig.add_trace(go.Scatter(x=x_end_order, y=y_end_order, mode='markers', name='end_order'))
 ord_len = len(x_start_order)
 for i in range(ord_len):
-    if i%10 == 0:
+    if i % 10 == 0:
         print('{}/{}'.format(i, ord_len))
-    fig.add_trace(go.Scatter(x=[x_start_order[i], x_end_order[i]], y=[y_start_order[i], y_end_order[i]], mode='lines'))
+    fig.add_trace(go.Scatter(x=[x_start_order[i], x_end_order[i]], y=[
+                  y_start_order[i], y_end_order[i]], mode='lines'))
 
 
 fig.show()
